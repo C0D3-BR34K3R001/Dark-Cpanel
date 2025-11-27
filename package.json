@@ -1,0 +1,38 @@
+{
+  "name": "darkpanel",
+  "version": "2.0.0",
+  "description": "Advanced Telegram Bot for Server Management with Pterodactyl Panel",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js",
+    "dev": "nodemon bot.js",
+    "backup": "node utils/backup.js",
+    "cleanup": "node utils/cleanup.js",
+    "logs": "tail -f logs/bot.log"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "pterodactyl",
+    "game-server",
+    "minecraft",
+    "hosting"
+  ],
+  "author": "CODEBREAKER",
+  "license": "MIT",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.64.0",
+    "axios": "^1.6.0",
+    "fs-extra": "^11.1.1",
+    "chalk": "^4.1.2",
+    "moment": "^2.29.4",
+    "winston": "^3.11.0",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
