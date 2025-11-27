@@ -1,11 +1,23 @@
 const logger = require('./logger');
 
+// Helper function to create beautiful menu
+function createMenu(title, items) {
+    let menu = `╭━━〔 ${title} 〕━━┈⊷\n`;
+    items.forEach((item, index) => {
+        if (item === '') {
+            menu += `┃✮│➣ \n`;
+        } else {
+            menu += `┃✮│➣ ${item}\n`;
+        }
+    });
+    menu += `╰━━━━━━━━━━━━━┈⊷`;
+    return menu;
+}
+
 module.exports = {
-    // Award points for channel verification
     awardChannelPoints: (user, database) => {
         let totalAwarded = 0;
         
-        // Telegram main channel
         if (user.channels.telegramMain && !user.telegramMainAwarded) {
             user.points += global.config.POINTS.CHANNEL_JOIN_POINTS;
             user.telegramMainAwarded = true;
@@ -13,7 +25,6 @@ module.exports = {
             logger.info(`Awarded ${global.config.POINTS.CHANNEL_JOIN_POINTS} points to ${user.id} for Telegram main channel`);
         }
         
-        // Telegram backup channel
         if (user.channels.telegramBackup && !user.telegramBackupAwarded) {
             user.points += global.config.POINTS.CHANNEL_JOIN_POINTS;
             user.telegramBackupAwarded = true;
@@ -21,7 +32,6 @@ module.exports = {
             logger.info(`Awarded ${global.config.POINTS.CHANNEL_JOIN_POINTS} points to ${user.id} for Telegram backup channel`);
         }
         
-        // WhatsApp channel
         if (user.channels.whatsapp && !user.whatsappAwarded) {
             user.points += global.config.POINTS.WHATSAPP_VERIFY_POINTS;
             user.whatsappAwarded = true;
@@ -29,7 +39,6 @@ module.exports = {
             logger.info(`Awarded ${global.config.POINTS.WHATSAPP_VERIFY_POINTS} points to ${user.id} for WhatsApp channel`);
         }
         
-        // Completion bonus
         if (user.channels.telegramMain && user.channels.telegramBackup && user.channels.whatsapp && !user.completionBonusAwarded) {
             user.points += 50;
             user.completionBonusAwarded = true;
@@ -40,7 +49,6 @@ module.exports = {
         return totalAwarded;
     },
     
-    // Award referral points
     awardReferralPoints: (referrer, referredUser, database) => {
         if (!referrer.referrals.includes(referredUser.id) && referredUser.verified) {
             referrer.points += global.config.POINTS.REFERRAL_POINTS;
@@ -51,7 +59,6 @@ module.exports = {
         return 0;
     },
     
-    // Check if user can do daily math
     canDoDailyMath: (user) => {
         const lastMath = user.last_daily_math || 0;
         const today = new Date().toDateString();
@@ -59,12 +66,26 @@ module.exports = {
         return lastMathDate !== today;
     },
     
-    // Get user points summary
     getPointsSummary: (user) => {
         return {
             total: user.points,
             neededForFree: Math.max(0, global.config.POINTS.FREE_SERVER_COST - user.points),
             progress: Math.min(100, (user.points / global.config.POINTS.FREE_SERVER_COST) * 100)
         };
+    },
+    
+    createPointsMenu: (user) => {
+        const summary = module.exports.getPointsSummary(user);
+        return createMenu('POINTS SUMMARY', [
+            `Current: ${summary.total} points`,
+            `Needed for Free: ${summary.neededForFree} points`,
+            `Progress: ${summary.progress.toFixed(1)}%`,
+            '',
+            'Earn points by:',
+            '• Channel verification',
+            '• Daily math challenges',
+            '• Referring friends',
+            '• Watching ads'
+        ]);
     }
 };

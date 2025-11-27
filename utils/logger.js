@@ -20,12 +20,12 @@ const logger = winston.createLogger({
     new winston.transports.File({ 
       filename: path.join(logsDir, 'errors.log'), 
       level: 'error',
-      maxsize: 5242880, // 5MB
+      maxsize: 5242880,
       maxFiles: 5
     }),
     new winston.transports.File({ 
       filename: path.join(logsDir, 'bot.log'),
-      maxsize: 5242880, // 5MB
+      maxsize: 5242880,
       maxFiles: 5
     }),
     new winston.transports.File({ 
@@ -37,7 +37,6 @@ const logger = winston.createLogger({
   ],
 });
 
-// Also log to console in development
 if (process.env.NODE_ENV !== 'production') {
   logger.add(new winston.transports.Console({
     format: winston.format.combine(

@@ -1,7 +1,7 @@
 {
-  "name": "darkpanel",
+  "name": "darkserverbot",
   "version": "2.0.0",
-  "description": "Advanced Telegram Bot for Server Management with Pterodactyl Panel",
+  "description": "Advanced Telegram Bot for Game Server Management with Pterodactyl Panel",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js",

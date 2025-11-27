@@ -1,33 +1,39 @@
 module.exports = {
-    // Welcome Messages
-    WELCOME: `👋 Welcome to *Dark Server Manager*
+    WELCOME: `╭━━〔 WELCOME 〕━━┈⊷
+┃✮│➣ Dark Server Manager
+┃✮│➣ Professional Hosting
+┃✮│➣ 
+┃✮│➣ Start with /verify
+╰━━━━━━━━━━━━━┈⊷`,
 
-I can help you create and manage servers instantly!
+    VERIFICATION_REQUIRED: `╭━━〔 VERIFICATION REQUIRED 〕━━┈⊷
+┃✮│➣ Complete channel verification
+┃✮│➣ to access all features
+┃✮│➣ 
+┃✮│➣ Use /verify to begin
+╰━━━━━━━━━━━━━┈⊷`,
 
-📋 *Requirements:*
-• Join our channels for verification
-• Earn points or fund your balance
-• Create servers in minutes
+    ACCESS_DENIED: `╭━━〔 ACCESS DENIED 〕━━┈⊷
+┃✮│➣ Admin privileges required
+┃✮│➣ 
+┃✮│➣ Contact administrator
+╰━━━━━━━━━━━━━┈⊷`,
 
-Use /menu to get started!`,
+    NOT_VERIFIED: `╭━━〔 VERIFICATION NEEDED 〕━━┈⊷
+┃✮│➣ Complete verification first
+┃✮│➣ 
+┃✮│➣ Use /verify command
+╰━━━━━━━━━━━━━┈⊷`,
 
-    // Verification Messages
-    VERIFICATION_REQUIRED: `🔐 *Verification Required*
+    INSUFFICIENT_POINTS: `╭━━〔 INSUFFICIENT POINTS 〕━━┈⊷
+┃✮│➣ Not enough points
+┃✮│➣ 
+┃✮│➣ Use /tasks to earn more
+╰━━━━━━━━━━━━━┈⊷`,
 
-To use this bot, you must join our channels:
-
-📢 *Telegram Channels:*
-• Main Channel: ${global.config.CHANNELS.TELEGRAM_MAIN}
-• Backup Channel: ${global.config.CHANNELS.TELEGRAM_BACKUP}
-
-📱 *WhatsApp Channel:*
-${global.config.CHANNELS.WHATSAPP_LINK}
-
-*After joining all channels, use /verify to check your status and earn points!*`,
-
-    // Access Denied Messages
-    ACCESS_DENIED: "❌ Access Denied",
-    NOT_VERIFIED: "❌ Please complete channel verification first using /verify",
-    INSUFFICIENT_POINTS: "❌ Insufficient points. Complete tasks to earn more points!",
-    INSUFFICIENT_BALANCE: "❌ Insufficient balance. Fund your account using /balance"
+    INSUFFICIENT_BALANCE: `╭━━〔 INSUFFICIENT BALANCE 〕━━┈⊷
+┃✮│➣ Not enough balance
+┃✮│➣ 
+┃✮│➣ Use /balance to fund
+╰━━━━━━━━━━━━━┈⊷`
 };

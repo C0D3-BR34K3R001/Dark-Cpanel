@@ -1,22 +1,16 @@
-//Base by CODEBREAKER 
-//Contact wa.me/2347030626048 fo bot development (WA bot, telegram bot etc)
-
-
-
-
 const fs = require('fs-extra');
 const path = require('path');
 
 module.exports = {
     // Bot Settings
-    BOT_TOKEN: "8523872849:AAFQjEF7sAwZ_lMLRHb4u828sbLjwhvbR9o",
-    ADMIN_IDS: ["7528793664"], // Your Telegram ID
-    ownerName: "𝐂𝐎𝐃𝐄𝐁𝐑𝐄𝐀𝐊𝐄𝐑",
+    BOT_TOKEN: "8415816270:AAFxcLS8c7Zd3rStEG3DuwxSf7LKqqVt9UA",
+    ADMIN_IDS: ["7030626048"],
+    ownerName: "CODEBREAKER",
     ownerLink: "https://wa.me/2347030626048",
     
     // Channel Verification
     CHANNELS: {
-        TELEGRAM_MAIN: "@devemp",
+        TELEGRAM_MAIN: "@darkemp",
         TELEGRAM_BACKUP: "@darkempsbackup", 
         WHATSAPP_LINK: "https://whatsapp.com/channel/0029Vb70IdY60eBmvtGRT00R"
     },
@@ -56,32 +50,32 @@ module.exports = {
             ram: 1024,
             disk: 5120,
             cpu: 100,
-            duration: 24, // hours
-            cost: 500 // points
+            duration: 24,
+            cost: 500
         },
         BASIC: {
             name: "2GB Basic", 
             ram: 2048,
             disk: 10240,
             cpu: 200,
-            duration: 168, // hours (7 days)
-            cost: 1000 // Naira
+            duration: 168,
+            cost: 1000
         },
         PRO: {
             name: "4GB Pro",
             ram: 4096, 
             disk: 20480,
             cpu: 400,
-            duration: 720, // hours (30 days)
-            cost: 2500 // Naira
+            duration: 720,
+            cost: 2500
         },
         PREMIUM: {
             name: "8GB Premium",
             ram: 8192,
             disk: 40960, 
             cpu: 800,
-            duration: 720, // hours (30 days)
-            cost: 5000 // Naira
+            duration: 720,
+            cost: 5000
         }
     },
     

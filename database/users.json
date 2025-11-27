@@ -1,8 +1,62 @@
 {
-  "users": {},
+  "users": {
+    "7528793664": {
+      "id": "7528793664",
+      "username": "devemps",
+      "first_name": "𝙲𝙾𝙳𝙴𝙱𝚁𝙴𝙰𝙺𝙴𝚁",
+      "balance": 9999999,
+      "points": 400,
+      "tier": "free",
+      "verified": true,
+      "channels": {
+        "telegramMain": true,
+        "telegramBackup": true,
+        "whatsapp": true
+      },
+      "servers": [],
+      "referrals": [],
+      "joined_date": 1764254008117,
+      "last_daily_math": 0,
+      "telegramMainAwarded": true,
+      "telegramBackupAwarded": true,
+      "whatsappAwarded": true,
+      "completionBonusAwarded": true,
+      "referredBy": null
+    },
+    "8523872849": {
+      "id": "8523872849",
+      "username": "",
+      "first_name": "",
+      "balance": 0,
+      "points": 0,
+      "tier": "free",
+      "verified": false,
+      "channels": {
+        "telegramMain": false,
+        "telegramBackup": false,
+        "whatsapp": false
+      },
+      "servers": [],
+      "referrals": [],
+      "joined_date": 1764254079672,
+      "last_daily_math": 0,
+      "telegramMainAwarded": false,
+      "telegramBackupAwarded": false,
+      "whatsappAwarded": false,
+      "completionBonusAwarded": false,
+      "referredBy": null
+    }
+  },
   "servers": {},
   "payments": {},
   "settings": {
     "lastCleanup": 0
-  }
+  },
+  "mathChallenges": {
+    "8523872849": {
+      "answer": -38,
+      "problem": "2 - 40"
+    }
+  },
+  "broadcastMode": {}
 }

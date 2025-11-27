@@ -1,8 +1,21 @@
 const fs = require('fs-extra');
 const chalk = require('chalk');
 
+// Helper function to create beautiful menu
+function createMenu(title, items) {
+    let menu = `╭━━〔 ${title} 〕━━┈⊷\n`;
+    items.forEach((item, index) => {
+        if (item === '') {
+            menu += `┃✮│➣ \n`;
+        } else {
+            menu += `┃✮│➣ ${item}\n`;
+        }
+    });
+    menu += `╰━━━━━━━━━━━━━┈⊷`;
+    return menu;
+}
+
 module.exports = {
-    // Handle verification command
     handleVerification: async (bot, msg, database) => {
         const chatId = msg.chat.id;
         const userId = msg.from.id.toString();
@@ -11,7 +24,6 @@ module.exports = {
         await showVerificationStatus(bot, chatId, user);
     },
     
-    // Handle verification callbacks
     handleVerificationCallback: async (bot, callbackQuery, database) => {
         const data = callbackQuery.data;
         const chatId = callbackQuery.message.chat.id;
@@ -33,7 +45,6 @@ module.exports = {
         await bot.answerCallbackQuery(callbackQuery.id);
     },
     
-    // Handle screenshot upload
     handleScreenshotUpload: async (bot, msg, database) => {
         const chatId = msg.chat.id;
         const userId = msg.from.id.toString();
@@ -42,52 +53,52 @@ module.exports = {
         if (msg.photo) {
             await processScreenshot(bot, chatId, user, database, msg.photo);
         } else {
-            await bot.sendMessage(chatId, '❌ Please send a screenshot image, not text.');
+            await bot.sendMessage(chatId, createMenu('ERROR', [
+                'Please send screenshot',
+                'as image, not text'
+            ]));
         }
     }
 };
 
-// Show verification status
 async function showVerificationStatus(bot, chatId, user) {
-    const statusText = `🔐 *Channel Verification*
+    const statusItems = [
+        'TELEGRAM CHANNELS',
+        `Main: ${global.config.CHANNELS.TELEGRAM_MAIN} ${user.channels.telegramMain ? '✓' : '✗'}`,
+        `Backup: ${global.config.CHANNELS.TELEGRAM_BACKUP} ${user.channels.telegramBackup ? '✓' : '✗'}`,
+        '',
+        'WHATSAPP CHANNEL',
+        `${global.config.CHANNELS.WHATSAPP_LINK} ${user.channels.whatsapp ? '✓' : '✗'}`,
+        '',
+        'POINTS REWARD',
+        'Telegram: 200 points',
+        'WhatsApp: 150 points',
+        'Bonus: 50 points',
+        '',
+        `STATUS: ${user.verified ? 'VERIFIED' : 'NOT VERIFIED'}`
+    ];
 
-*Required Channels:*
-
-📢 *Telegram Channels:*
-• Main Channel: ${global.config.CHANNELS.TELEGRAM_MAIN} ${user.channels.telegramMain ? '✅' : '❌'}
-• Backup Channel: ${global.config.CHANNELS.TELEGRAM_BACKUP} ${user.channels.telegramBackup ? '✅' : '❌'}
-
-📱 *WhatsApp Channel:*
-${global.config.CHANNELS.WHATSAPP_LINK} ${user.channels.whatsapp ? '✅' : '❌'}
-
-*Points Reward:*
-• Each Telegram channel: ${global.config.POINTS.CHANNEL_JOIN_POINTS} points
-• WhatsApp verification: ${global.config.POINTS.WHATSAPP_VERIFY_POINTS} points
-• Complete all: 50 bonus points
-
-*Status:* ${user.verified ? '✅ VERIFIED' : '❌ NOT VERIFIED'}`;
+    const statusText = createMenu('VERIFICATION STATUS', statusItems);
 
     const buttons = {
         reply_markup: {
             inline_keyboard: [
-                [{ text: '🔄 Check Telegram Channels', callback_data: 'verify_check' }],
-                [{ text: '📱 Verify WhatsApp Channel', callback_data: 'verify_whatsapp' }],
+                [{ text: '🔍 Check Telegram', callback_data: 'verify_check' }],
+                [{ text: '📱 Verify WhatsApp', callback_data: 'verify_whatsapp' }],
                 [{ text: '📸 Submit Screenshot', callback_data: 'verify_submit_screenshot' }]
             ]
         }
     };
 
-    await bot.sendMessage(chatId, statusText, { parse_mode: 'Markdown', ...buttons });
+    await bot.sendMessage(chatId, statusText, buttons);
 }
 
-// Check Telegram channels
 async function checkTelegramChannels(bot, chatId, user, database) {
     try {
         // Simulate checking (replace with actual channel checks)
         user.channels.telegramMain = true;
         user.channels.telegramBackup = true;
         
-        // Award points for Telegram channels
         let pointsAwarded = 0;
         if (user.channels.telegramMain && !user.telegramMainAwarded) {
             user.points += global.config.POINTS.CHANNEL_JOIN_POINTS;
@@ -103,39 +114,41 @@ async function checkTelegramChannels(bot, chatId, user, database) {
         
         await fs.writeJson('./database/users.json', database, { spaces: 2 });
         
-        let message = '✅ Telegram channels checked!\n';
+        let message = createMenu('TELEGRAM CHECKED', [
+            'Channels verified!'
+        ]);
+        
         if (pointsAwarded > 0) {
-            message += `🎉 You earned ${pointsAwarded} points!\n`;
+            message += `\n\nEarned: ${pointsAwarded} points\nTotal: ${user.points} points`;
         }
-        message += `📊 Total points: ${user.points}`;
         
         await bot.sendMessage(chatId, message);
         
-        // Check if user is now fully verified
         await checkFullVerification(bot, chatId, user, database);
         
     } catch (error) {
-        await bot.sendMessage(chatId, '❌ Error checking channels. Please try again.');
+        await bot.sendMessage(chatId, createMenu('ERROR', [
+            'Failed to check channels',
+            'Please try again'
+        ]));
         console.log(chalk.red('Verification error:'), error);
     }
 }
 
-// Request WhatsApp screenshot
 async function requestWhatsAppScreenshot(bot, chatId) {
-    const message = `📱 *WhatsApp Channel Verification*
-
-Please follow these steps:
-
-1. Join our WhatsApp channel:
-${global.config.CHANNELS.WHATSAPP_LINK}
-
-2. Take a screenshot showing you're "Following" the channel
-
-3. Send the screenshot to this bot
-
-4. We'll verify and award you ${global.config.POINTS.WHATSAPP_VERIFY_POINTS} points!
-
-Click the button below when you're ready to upload your screenshot.`;
+    const message = createMenu('WHATSAPP VERIFICATION', [
+        'Steps to verify:',
+        '',
+        '1. Join WhatsApp channel',
+        global.config.CHANNELS.WHATSAPP_LINK,
+        '',
+        '2. Take screenshot showing',
+        'you are "Following"',
+        '',
+        '3. Send screenshot here',
+        '',
+        'Reward: 150 points'
+    ]);
 
     const buttons = {
         reply_markup: {
@@ -145,18 +158,21 @@ Click the button below when you're ready to upload your screenshot.`;
         }
     };
 
-    await bot.sendMessage(chatId, message, { parse_mode: 'Markdown', ...buttons });
+    await bot.sendMessage(chatId, message, buttons);
 }
 
-// Request screenshot upload
 async function requestScreenshotUpload(bot, chatId) {
-    await bot.sendMessage(chatId, '📸 Please send your WhatsApp channel screenshot now...');
+    await bot.sendMessage(chatId, createMenu('UPLOAD SCREENSHOT', [
+        'Please send your',
+        'WhatsApp channel screenshot',
+        '',
+        'Make sure it shows you',
+        'are "Following" the channel'
+    ]));
 }
 
-// Process screenshot
 async function processScreenshot(bot, chatId, user, database, photo) {
     try {
-        // Auto-approve all screenshots for now
         if (!user.channels.whatsapp) {
             user.channels.whatsapp = true;
             user.points += global.config.POINTS.WHATSAPP_VERIFY_POINTS;
@@ -164,25 +180,32 @@ async function processScreenshot(bot, chatId, user, database, photo) {
             
             await fs.writeJson('./database/users.json', database, { spaces: 2 });
             
-            await bot.sendMessage(chatId, 
-                `✅ WhatsApp screenshot received and verified!\n` +
-                `🎉 You earned ${global.config.POINTS.WHATSAPP_VERIFY_POINTS} points!\n` +
-                `📊 Total points: ${user.points}`
-            );
+            await bot.sendMessage(chatId, createMenu('WHATSAPP VERIFIED', [
+                'Screenshot received!',
+                '',
+                `Earned: ${global.config.POINTS.WHATSAPP_VERIFY_POINTS} points`,
+                `Total: ${user.points} points`
+            ]));
             
-            // Check full verification
             await checkFullVerification(bot, chatId, user, database);
         } else {
-            await bot.sendMessage(chatId, '✅ WhatsApp channel already verified!');
+            await bot.sendMessage(chatId, createMenu('ALREADY VERIFIED', [
+                'WhatsApp channel',
+                'already verified'
+            ]));
         }
         
     } catch (error) {
-        await bot.sendMessage(chatId, '❌ Error processing screenshot. Please try again.');
+        await bot.sendMessage(chatId, createMenu('ERROR', [
+            'Failed to process',
+            'screenshot',
+            '',
+            'Please try again'
+        ]));
         console.log(chalk.red('Screenshot error:'), error);
     }
 }
 
-// Check if user is fully verified
 async function checkFullVerification(bot, chatId, user, database) {
     const allChannelsVerified = user.channels.telegramMain && 
                                user.channels.telegramBackup && 
@@ -191,7 +214,6 @@ async function checkFullVerification(bot, chatId, user, database) {
     if (allChannelsVerified && !user.verified) {
         user.verified = true;
         
-        // Award completion bonus
         if (!user.completionBonusAwarded) {
             user.points += 50;
             user.completionBonusAwarded = true;
@@ -199,12 +221,14 @@ async function checkFullVerification(bot, chatId, user, database) {
         
         await fs.writeJson('./database/users.json', database, { spaces: 2 });
         
-        await bot.sendMessage(chatId,
-            `🎉 *VERIFICATION COMPLETE!*\n\n` +
-            `✅ All channels verified!\n` +
-            `🎁 50 bonus points awarded!\n` +
-            `📊 Total points: ${user.points}\n\n` +
-            `You can now create servers using /create`
-        );
+        await bot.sendMessage(chatId, createMenu('VERIFICATION COMPLETE', [
+            'All channels verified!',
+            '',
+            'Bonus: 50 points awarded',
+            `Total points: ${user.points}`,
+            '',
+            'Full access granted',
+            'Create servers with /create'
+        ]));
     }
 }

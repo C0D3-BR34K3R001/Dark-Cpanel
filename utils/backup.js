@@ -3,6 +3,20 @@ const path = require('path');
 const chalk = require('chalk');
 const logger = require('./logger');
 
+// Helper function to create beautiful menu
+function createMenu(title, items) {
+    let menu = `╭━━〔 ${title} 〕━━┈⊷\n`;
+    items.forEach((item, index) => {
+        if (item === '') {
+            menu += `┃✮│➣ \n`;
+        } else {
+            menu += `┃✮│➣ ${item}\n`;
+        }
+    });
+    menu += `╰━━━━━━━━━━━━━┈⊷`;
+    return menu;
+}
+
 module.exports = {
     createBackup: async () => {
         try {
@@ -14,7 +28,6 @@ module.exports = {
             
             const database = await fs.readJson(path.join(__dirname, '../database/users.json'));
             
-            // Add backup metadata
             const backupData = {
                 metadata: {
                     timestamp: new Date().toISOString(),
@@ -27,13 +40,13 @@ module.exports = {
             
             await fs.writeJson(backupFile, backupData, { spaces: 2 });
             
-            console.log(chalk.green(`✅ Backup created: ${path.basename(backupFile)}`));
+            console.log(chalk.green(`Backup created: ${path.basename(backupFile)}`));
             logger.info(`Backup created: ${backupFile}`);
             
             return backupFile;
             
         } catch (error) {
-            console.log(chalk.red('❌ Backup creation failed:'), error);
+            console.log(chalk.red('Backup creation failed:'), error);
             logger.error('Backup creation failed', error);
             throw error;
         }
@@ -51,14 +64,13 @@ module.exports = {
                     const filePath = path.join(backupDir, f);
                     return { name: f, path: filePath, time: fs.statSync(filePath).mtimeMs };
                 })
-                .sort((a, b) => b.time - a.time); // Sort by newest first
+                .sort((a, b) => b.time - a.time);
             
-            // Keep only the most recent backups
             const filesToDelete = backupFiles.slice(maxBackups);
             
             for (const file of filesToDelete) {
                 await fs.remove(file.path);
-                console.log(chalk.yellow(`🧹 Removed old backup: ${file.name}`));
+                console.log(chalk.yellow(`Removed old backup: ${file.name}`));
                 logger.info(`Removed old backup: ${file.name}`);
             }
             
@@ -82,17 +94,15 @@ module.exports = {
             const backupData = await fs.readJson(backupFile);
             const databaseFile = path.join(__dirname, '../database/users.json');
             
-            // Create restore backup first
             const restoreBackupDir = path.join(__dirname, '../database/restore_backups');
             await fs.ensureDir(restoreBackupDir);
             const currentData = await fs.readJson(databaseFile);
             const restoreBackupFile = path.join(restoreBackupDir, `restore-backup-${Date.now()}.json`);
             await fs.writeJson(restoreBackupFile, currentData, { spaces: 2 });
             
-            // Restore the backup
             await fs.writeJson(databaseFile, backupData.data, { spaces: 2 });
             
-            console.log(chalk.green(`✅ Backup restored from: ${backupFileName}`));
+            console.log(chalk.green(`Backup restored from: ${backupFileName}`));
             logger.info(`Backup restored from: ${backupFileName}`);
             
             return true;
@@ -117,6 +127,32 @@ module.exports = {
         } catch (error) {
             console.log(chalk.red('Backup list error:'), error);
             return [];
+        }
+    },
+    
+    createBackupMenu: async () => {
+        try {
+            const backups = await module.exports.listBackups();
+            const backupCount = backups.length;
+            const latestBackup = backups[0] || 'No backups found';
+            
+            return createMenu('BACKUP SYSTEM', [
+                `Total Backups: ${backupCount}`,
+                `Latest: ${latestBackup}`,
+                '',
+                'Auto-backups run hourly',
+                'Old backups auto-deleted',
+                '',
+                'Manual commands:',
+                '• /admin backup - Create backup',
+                '• /admin restore - Restore backup'
+            ]);
+        } catch (error) {
+            return createMenu('BACKUP SYSTEM', [
+                'Error loading backup info',
+                '',
+                'Check logs for details'
+            ]);
         }
     }
 };
